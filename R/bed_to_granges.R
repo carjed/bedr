@@ -4,16 +4,17 @@
 #' The tab-delimited file must be ordered as 'chr', 'start', 'end', 'id', 'score', 'strand'.
 #' The minimal BED file must have the 'chr', 'start', 'end' columns.
 #' Any columns after the strand column are ignored.
-#' 
+#'
 #' @param file Location of your file
 #' @keywords BED GRanges
 #' @export
 #' @examples
 #' bed_to_granges('my_bed_file.bed')
 
-bed_to_granges <- function(file){
+bed_to_granges <- function(file, header){
+  hd<-header
    df <- read.table(file,
-                    header=F,
+                    header=hd,
                     stringsAsFactors=F)
 
    if(length(df) > 6){
@@ -26,11 +27,11 @@ bed_to_granges <- function(file){
 
    header <- c('chr','start','end','id','score','strand')
    names(df) <- header[1:length(names(df))]
-   
+
    if('strand' %in% colnames(df)){
       df$strand <- gsub(pattern="[^+-]+", replacement = '*', x = df$strand)
    }
-   
+
    library("GenomicRanges")
 
    if(length(df)==3){
@@ -44,4 +45,3 @@ bed_to_granges <- function(file){
    }
    return(gr)
 }
-
